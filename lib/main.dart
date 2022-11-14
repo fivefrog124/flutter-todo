@@ -44,6 +44,8 @@ class _AnaEkranState extends State<AnaEkran> {
   @override
   void initState() {
     super.initState();
+    // ignore: unrelated_type_equality_checks
+
     get_api();
   }
 
@@ -56,8 +58,7 @@ class _AnaEkranState extends State<AnaEkran> {
 
   // ignore: non_constant_identifier_names
   List yapilacaklarListesi = [];
-  List ids = [];
-  List data = [];
+  Map myTodo = {};
 
   bool isDisabled = true;
 
@@ -78,6 +79,7 @@ class _AnaEkranState extends State<AnaEkran> {
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
+
     setState(() {});
   }
 
@@ -89,23 +91,14 @@ class _AnaEkranState extends State<AnaEkran> {
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
 
-    Map myTodo = jsonDecode(response.body);
+    myTodo = jsonDecode(response.body);
     // ignore: unused_local_variable, prefer_interpolation_to_compose_strings
-    List data = myTodo["todos"];
-    print(data);
 
-    for (var i = 0; i < data.length; i++) {
-      yapilacaklarListesi.add(data[i]["todo"]);
+    print(myTodo["todos"]);
+
+    for (var i = 0; i < myTodo.length; i++) {
+      yapilacaklarListesi.add(myTodo[i]["todo"]);
     }
-
-    for (var a = 0; a < data.length; a++) {
-      // ignore: unused_local_variable
-
-      print(data[a]["id"]);
-      ids.add(data[a]["id"]);
-    }
-    print(ids);
-
     setState(() {});
   }
 
@@ -151,9 +144,14 @@ class _AnaEkranState extends State<AnaEkran> {
                     background: Container(
                       color: Colors.green,
                       child: Row(
-                        children: const [
-                          Icon(Icons.delete, color: Colors.white),
-                          Text('Çop kutusuna taşıyın',
+                        children: [
+                          // ignore: avoid_unnecessary_containers
+                          Container(
+                            margin: const EdgeInsets.all(5.0),
+                            child: const Icon(Icons.assistant_photo_sharp,
+                                color: Colors.white),
+                          ),
+                          const Text('Yapılacakların Tamamlandı',
                               style: TextStyle(color: Colors.white)),
                         ],
                       ),
@@ -182,8 +180,7 @@ class _AnaEkranState extends State<AnaEkran> {
                               onPressed: () {
                                 setState(() {
                                   Navigator.pop(context, 'Sil');
-                                  print("----------" + ids[index]);
-                                  //delete_api(ids[index]);
+                                  delete_api(myTodo[index]["id"]);
                                   yapilacaklarListesi.removeAt(index);
                                 });
                               },
