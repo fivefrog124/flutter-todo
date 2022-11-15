@@ -59,7 +59,6 @@ class _AnaEkranState extends State<AnaEkran> {
   // ignore: non_constant_identifier_names
   List yapilacaklarListesi = [];
   Map myTodo = {};
-
   bool isDisabled = true;
 
   elemanEkle() {
@@ -92,13 +91,12 @@ class _AnaEkranState extends State<AnaEkran> {
     print('Response body: ${response.body}');
 
     myTodo = jsonDecode(response.body);
-    // ignore: unused_local_variable, prefer_interpolation_to_compose_strings
-
     print(myTodo["todos"]);
 
     for (var i = 0; i < myTodo.length; i++) {
       yapilacaklarListesi.add(myTodo[i]["todo"]);
     }
+
     setState(() {});
   }
 
