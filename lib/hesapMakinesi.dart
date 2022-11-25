@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'anaEkran.dart';
 // void main() {
@@ -141,14 +142,14 @@ import 'anaEkran.dart';
 
 // -----------------------------------------------------------------------
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Hesap Makinesi',
       home: Iskele(),
     );
@@ -162,7 +163,7 @@ class Iskele extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Basit Hesap Makinesi'),
+        title: const Text('Basit Hesap Makinesi'),
       ),
       body: const AnaEkran(),
     );

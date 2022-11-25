@@ -1,15 +1,7 @@
 // ignore_for_file: file_names, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, avoid_print
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 void main() => runApp(const MyApp());
-
-get_api() async {
-  var url = Uri.http('http://192.168.1.6/sil.php?id=4');
-  var response = await http.get(url);
-  print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

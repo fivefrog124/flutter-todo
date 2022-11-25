@@ -39,6 +39,7 @@ dependencies:
   http: ^0.13.5
   flutter_timer_countdown: ^1.0.5
   animated_flip_counter: ^0.2.5
+  flutter_svg: ^1.1.6
 
 dev_dependencies:
   flutter_test:

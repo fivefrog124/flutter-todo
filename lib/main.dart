@@ -292,9 +292,11 @@
 //   Todo(this.id, this.myTodo);
 // }
 
-import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'countdown.dart';
+import 'countup.dart';
 
 void main() => runApp(const MyApp());
 
@@ -304,6 +306,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'ToDo Uygulaması',
       home: Iskele(),
     );
@@ -317,89 +320,162 @@ class Iskele extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: null,
-      body: CountdownTimer(),
+      body: AnaSayfa(),
     );
   }
 }
 
-class CountdownTimer extends StatefulWidget {
-  const CountdownTimer({super.key});
+class AnaSayfa extends StatefulWidget {
+  const AnaSayfa({super.key});
 
   @override
-  State<CountdownTimer> createState() => _CountdownTimerState();
+  State<AnaSayfa> createState() => _AnaSayfaState();
 }
 
-class _CountdownTimerState extends State<CountdownTimer> {
-  Timer? countdownTimer;
-
-  Duration myDuration = const Duration(minutes: 10);
+class _AnaSayfaState extends State<AnaSayfa> {
   @override
   void initState() {
     super.initState();
-
-    countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
-
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-  }
-
-  @override
-  dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    super.dispose();
-  }
-
-  void setCountDown() {
-    const reduceSecondsBy = 1;
-    setState(() {
-      final seconds = myDuration.inSeconds - reduceSecondsBy;
-      if (seconds < 0) {
-        countdownTimer!.cancel();
-      } else {
-        myDuration = Duration(seconds: seconds);
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String strDigits(int n) => n.toString().padLeft(2, '0');
-
-    final minutes = strDigits(myDuration.inMinutes.remainder(1));
-    final seconds = strDigits(myDuration.inSeconds.remainder(60));
-
     return Scaffold(
       appBar: null,
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
+            image: AssetImage("assets/images/main_background.png"),
           ),
         ),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 100,
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CountdownTimer(
+                          countMin: 15,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    '15 MIN',
+                    style: TextStyle(
+                        fontFamily: 'Bebas Neue',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: 60),
+                  ),
+                ),
               ),
-              RichText(
-                text: TextSpan(
-                  text: '$minutes' ' ' '$seconds',
-                  style: const TextStyle(
-                      letterSpacing: 70.0,
-                      fontFamily: 'Bebas Neue',
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                      fontSize: 200),
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CountdownTimer(
+                          countMin: 25,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    '25 MIN',
+                    style: TextStyle(
+                        fontFamily: 'Bebas Neue',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: 60),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CountdownTimer(
+                          countMin: 40,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    '40 MIN',
+                    style: TextStyle(
+                        fontFamily: 'Bebas Neue',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: 60),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CountdownTimer1(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'INFINTI',
+                    style: TextStyle(
+                        fontFamily: 'Bebas Neue',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: 60),
+                  ),
                 ),
               ),
             ],
@@ -409,3 +485,234 @@ class _CountdownTimerState extends State<CountdownTimer> {
     );
   }
 }
+
+// import 'dart:async';
+
+// import 'package:flutter/material.dart';
+
+// void main() {
+//   runApp(const MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: const AttendanceScreen(),
+//     );
+//   }
+// }
+
+// class AttendanceScreen extends StatefulWidget {
+//   const AttendanceScreen({super.key});
+
+//   @override
+//   // ignore: library_private_types_in_public_api
+//   _AttendanceScreenState createState() => _AttendanceScreenState();
+// }
+
+// class _AttendanceScreenState extends State<AttendanceScreen> {
+//   static var countdownDuration = const Duration(minutes: 10);
+//   static var countdownDuration1 = const Duration(minutes: 10);
+//   Duration duration = const Duration();
+//   Duration duration1 = const Duration();
+//   Timer? timer;
+//   Timer? timer1;
+//   bool countDown = true;
+//   bool countDown1 = true;
+
+//   @override
+//   void initState() {
+//     var hours;
+//     var mints;
+//     var secs;
+//     hours = int.parse("00");
+//     mints = int.parse("00");
+//     secs = int.parse("00");
+//     countdownDuration = Duration(hours: hours, minutes: mints, seconds: secs);
+//     startTimer();
+//     reset();
+//     var hours1;
+//     var mints1;
+//     var secs1;
+//     hours1 = int.parse("10");
+//     mints1 = int.parse("00");
+//     secs1 = int.parse("00");
+//     countdownDuration1 =
+//         Duration(hours: hours1, minutes: mints1, seconds: secs1);
+//     startTimer1();
+//     reset1();
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: _onWillPop,
+//       child: Scaffold(
+//         appBar: AppBar(
+//           title: const Text("Timer Example"),
+//           leading: IconButton(
+//             icon: const Icon(Icons.arrow_back_ios),
+//             color: Colors.white,
+//             onPressed: () {
+//               _onWillPop();
+//             },
+//           ),
+//         ),
+//         body: Container(
+//           color: Colors.black12,
+//           width: double.infinity,
+//           child: Column(
+//               mainAxisAlignment: MainAxisAlignment.start,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 const SizedBox(
+//                   height: 20,
+//                 ),
+//                 const Text(
+//                   "Timer",
+//                   style: TextStyle(fontSize: 25),
+//                 ),
+//                 Container(
+//                     margin: const EdgeInsets.only(top: 30, bottom: 30),
+//                     child: buildTime()),
+//                 const SizedBox(
+//                   height: 20,
+//                 ),
+//                 const Text(
+//                   "Count down timer",
+//                   style: TextStyle(fontSize: 25),
+//                 ),
+//                 Container(
+//                     margin: const EdgeInsets.only(top: 30, bottom: 30),
+//                     child: buildTime1()),
+//               ]),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Future<bool> _onWillPop() async {
+//     final isRunning = timer == null ? false : timer!.isActive;
+//     if (isRunning) {
+//       timer!.cancel();
+//     }
+//     Navigator.of(context, rootNavigator: true).pop(context);
+//     return true;
+//   }
+
+//   void reset() {
+//     if (countDown) {
+//       setState(() => duration = countdownDuration);
+//     } else {
+//       setState(() => duration = const Duration());
+//     }
+//   }
+
+//   void reset1() {
+//     if (countDown) {
+//       setState(() => duration1 = countdownDuration1);
+//     } else {
+//       setState(() => duration1 = const Duration());
+//     }
+//   }
+
+//   void startTimer() {
+//     timer = Timer.periodic(const Duration(seconds: 1), (_) => addTime());
+//   }
+
+//   void startTimer1() {
+//     timer = Timer.periodic(const Duration(seconds: 1), (_) => addTime1());
+//   }
+
+//   void addTime() {
+//     final addSeconds = 1;
+//     setState(() {
+//       final seconds = duration.inSeconds + addSeconds;
+//       if (seconds < 0) {
+//         timer?.cancel();
+//       } else {
+//         duration = Duration(seconds: seconds);
+//       }
+//     });
+//   }
+
+//   void addTime1() {
+//     final addSeconds = 1;
+//     setState(() {
+//       final seconds = duration1.inSeconds - addSeconds;
+//       if (seconds < 0) {
+//         timer1?.cancel();
+//       } else {
+//         duration1 = Duration(seconds: seconds);
+//       }
+//     });
+//   }
+
+//   Widget buildTime() {
+//     String twoDigits(int n) => n.toString().padLeft(2, '0');
+//     final hours = twoDigits(duration.inHours);
+//     final minutes = twoDigits(duration.inMinutes.remainder(60));
+//     final seconds = twoDigits(duration.inSeconds.remainder(60));
+//     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+//       buildTimeCard(time: hours, header: 'HOURS'),
+//       const SizedBox(
+//         width: 8,
+//       ),
+//       buildTimeCard(time: minutes, header: 'MINUTES'),
+//       const SizedBox(
+//         width: 8,
+//       ),
+//       buildTimeCard(time: seconds, header: 'SECONDS'),
+//     ]);
+//   }
+
+//   Widget buildTime1() {
+//     String twoDigits(int n) => n.toString().padLeft(2, '0');
+//     final hours = twoDigits(duration1.inHours);
+//     final minutes = twoDigits(duration1.inMinutes.remainder(60));
+//     final seconds = twoDigits(duration1.inSeconds.remainder(60));
+//     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+//       buildTimeCard(time: hours, header: 'HOURS'),
+//       const SizedBox(
+//         width: 8,
+//       ),
+//       buildTimeCard(time: minutes, header: 'MINUTES'),
+//       const SizedBox(
+//         width: 8,
+//       ),
+//       buildTimeCard(time: seconds, header: 'SECONDS'),
+//     ]);
+//   }
+
+//   Widget buildTimeCard({required String time, required String header}) =>
+//       Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Container(
+//             padding: const EdgeInsets.all(8),
+//             decoration: BoxDecoration(
+//                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
+//             child: Text(
+//               time,
+//               style: const TextStyle(
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.black,
+//                   fontSize: 50),
+//             ),
+//           ),
+//           const SizedBox(
+//             height: 24,
+//           ),
+//           Text(header, style: const TextStyle(color: Colors.black45)),
+//         ],
+//       );
+// }

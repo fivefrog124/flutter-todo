@@ -64,10 +64,12 @@ class _AnaEkranState extends State<AnaEkran> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(onPressed: sayiTopla, child: Text('Topla')),
-                ElevatedButton(onPressed: sayiCikar, child: Text('Çıkar')),
-                ElevatedButton(onPressed: sayiCarp, child: Text('Çarp')),
-                ElevatedButton(onPressed: sayiBol, child: Text('Böl')),
+                ElevatedButton(
+                    onPressed: sayiTopla, child: const Text('Topla')),
+                ElevatedButton(
+                    onPressed: sayiCikar, child: const Text('Çıkar')),
+                ElevatedButton(onPressed: sayiCarp, child: const Text('Çarp')),
+                ElevatedButton(onPressed: sayiBol, child: const Text('Böl')),
               ],
             )
           ],
