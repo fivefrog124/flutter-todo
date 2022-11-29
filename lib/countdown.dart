@@ -19,6 +19,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
   late int countMin;
   late Duration myDuration;
   bool cursorVisible = true;
+  bool startStop = true;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   dispose() {
+    countdownTimer!.cancel();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -52,8 +54,29 @@ class _CountdownTimerState extends State<CountdownTimer> {
     super.dispose();
   }
 
-  void stopTimer() {
-    setState(() => countdownTimer!.cancel());
+  startOrStop() {
+    if (startStop) {
+      // ignore: avoid_print
+      print("startstop Inside=$startStop");
+      startTimer();
+    } else {
+      stopTimer();
+    }
+  }
+
+  void startTimer() {
+    setState(() {
+      countdownTimer =
+          Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
+      startStop = false;
+    });
+  }
+
+  stopTimer() {
+    setState(() {
+      startStop = true;
+      countdownTimer!.cancel();
+    });
   }
 
   void setCountDown() {
@@ -128,12 +151,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AnaSayfa(),
-                    ),
-                  );
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                    DeviceOrientation.portraitDown,
+                  ]);
                 },
               ),
             ],
@@ -142,177 +166,146 @@ class _CountdownTimerState extends State<CountdownTimer> {
       );
     }
 
-    return Scaffold(
-      appBar: null,
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                padding: const EdgeInsets.only(right: 10),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: () {
-                      showMyDialog();
-                    },
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 36,
+    return WillPopScope(
+      onWillPop: () async {
+        countdownTimer!.cancel();
+        // ignore: avoid_print
+        print("geriye çıkıldı canım!");
+        return true;
+      },
+      child: Scaffold(
+        appBar: null,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/background2.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            minutes[0],
+                            style: const TextStyle(
+                                letterSpacing: 70.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 165),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            minutes[1],
+                            style: const TextStyle(
+                                letterSpacing: 70.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 165),
+                          ),
+                        ),
+                        Opacity(
+                          opacity: cursorVisible ? 1 : 0.5,
+                          child: const Text(
+                            ':',
+                            style: TextStyle(
+                              letterSpacing: 70.0,
+                              color: Colors.white,
+                              fontSize: 217,
+                              fontFamily: 'Bebas Neue',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            seconds[0],
+                            style: const TextStyle(
+                                letterSpacing: 70.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 165),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white10,
+                              borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            seconds[1],
+                            style: const TextStyle(
+                                letterSpacing: 70.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 165),
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  onPressed: () {
+                    showMyDialog();
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 36,
                   ),
                 ),
               ),
-
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          minutes[0],
-                          style: const TextStyle(
-                              letterSpacing: 70.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 165),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          minutes[1],
-                          style: const TextStyle(
-                              letterSpacing: 70.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 165),
-                        ),
-                      ),
-                      Opacity(
-                        opacity: cursorVisible ? 1 : 0.5,
-                        child: const Text(
-                          ':',
-                          style: TextStyle(
-                            letterSpacing: 70.0,
-                            color: Colors.white,
-                            fontSize: 217,
-                            fontFamily: 'Bebas Neue',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          seconds[0],
-                          style: const TextStyle(
-                              letterSpacing: 70.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 165),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          seconds[1],
-                          style: const TextStyle(
-                              letterSpacing: 70.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 165),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                margin: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(12)),
+                child: IconButton(
+                    color: Colors.white,
+                    iconSize: 42.0,
+                    onPressed: () => startOrStop(),
+                    icon: startStop
+                        ? const Icon(Icons.play_arrow)
+                        : const Icon(Icons.pause)),
               ),
-
-              // RichText(
-              //   text: TextSpan(text: null, children: [
-              //     TextSpan(
-              //       text: minutes[0],
-              //       style: const TextStyle(
-              //           letterSpacing: 70.0,
-              //           fontFamily: 'Bebas Neue',
-              //           fontWeight: FontWeight.normal,
-              //           color: Colors.white,
-              //           fontSize: 165),
-              //     ),
-              //     TextSpan(
-              //       text: minutes[1],
-              //       style: const TextStyle(
-              //           letterSpacing: 70.0,
-              //           fontFamily: 'Bebas Neue',
-              //           fontWeight: FontWeight.normal,
-              //           color: Colors.white,
-              //           fontSize: 165),
-              //     ),
-              //     const TextSpan(
-              //       text: ':',
-              //       style: TextStyle(
-              //         letterSpacing: 70.0,
-              //         color: Colors.white,
-              //         fontSize: 217,
-              //         fontFamily: 'Bebas Neue',
-              //       ),
-              //     ),
-              //     TextSpan(
-              //       text: seconds[0],
-              //       style: const TextStyle(
-              //           letterSpacing: 70.0,
-              //           fontFamily: 'Bebas Neue',
-              //           fontWeight: FontWeight.normal,
-              //           color: Colors.white,
-              //           fontSize: 165),
-              //     ),
-              //     TextSpan(
-              //       text: seconds[1],
-              //       style: const TextStyle(
-              //           letterSpacing: 70.0,
-              //           fontFamily: 'Bebas Neue',
-              //           fontWeight: FontWeight.normal,
-              //           color: Colors.white,
-              //           fontSize: 165),
-              //     )
-              //   ]),
-              // ),
-              const SizedBox(
-                height: 80,
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

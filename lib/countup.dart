@@ -24,7 +24,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
 
     // ignore: await_only_futures
 
-    myDuration = const Duration(minutes: 0);
+    myDuration = const Duration(hours: 0);
 
     countdownTimer1 = Timer.periodic(const Duration(seconds: 1), (_) {
       cursorVisible ? cursorVisible = false : cursorVisible = true;
@@ -68,7 +68,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   @override
   Widget build(BuildContext context) {
     String strDigits(int n) => n.toString().padLeft(2, '0');
-
+    final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
 
@@ -114,24 +114,24 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: const Text(
-                  'Yep, stop',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 17,
-                    fontFamily: 'Bebas Neue',
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AnaSayfa(),
-                    ),
-                  );
-                },
-              ),
+              // TextButton(
+              //   child: const Text(
+              //     'Yep, stop',
+              //     style: TextStyle(
+              //       color: Colors.red,
+              //       fontSize: 17,
+              //       fontFamily: 'Bebas Neue',
+              //     ),
+              //   ),
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => const AnaSayfa(),
+              //       ),
+              //     );
+              //   },
+              // ),
             ],
           );
         },
@@ -180,13 +180,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12)),
                         margin: const EdgeInsets.all(8),
                         child: Text(
-                          minutes[0],
+                          hours[0],
                           style: const TextStyle(
-                              letterSpacing: 70.0,
+                              letterSpacing: 50.0,
                               fontFamily: 'Bebas Neue',
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
-                              fontSize: 165),
+                              fontSize: 125),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12)),
+                        margin: const EdgeInsets.all(8),
+                        child: Text(
+                          hours[0],
+                          style: const TextStyle(
+                              letterSpacing: 50.0,
+                              fontFamily: 'Bebas Neue',
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                              fontSize: 125),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: cursorVisible ? 1 : 0.2,
+                        child: const Text(
+                          ':',
+                          style: TextStyle(
+                            letterSpacing: 10.0,
+                            color: Colors.white,
+                            fontSize: 140,
+                            fontFamily: 'Bebas Neue',
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12)),
+                        margin: const EdgeInsets.all(8),
+                        child: Text(
+                          minutes[0],
+                          style: const TextStyle(
+                              letterSpacing: 50.0,
+                              fontFamily: 'Bebas Neue',
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                              fontSize: 125),
                         ),
                       ),
                       Container(
@@ -198,11 +242,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                         child: Text(
                           minutes[1],
                           style: const TextStyle(
-                              letterSpacing: 70.0,
+                              letterSpacing: 50.0,
                               fontFamily: 'Bebas Neue',
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
-                              fontSize: 165),
+                              fontSize: 125),
                         ),
                       ),
                       Opacity(
@@ -210,9 +254,9 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                         child: const Text(
                           ':',
                           style: TextStyle(
-                            letterSpacing: 16.0,
+                            letterSpacing: 10.0,
                             color: Colors.white,
-                            fontSize: 190,
+                            fontSize: 140,
                             fontFamily: 'Bebas Neue',
                           ),
                         ),
@@ -226,11 +270,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                         child: Text(
                           seconds[0],
                           style: const TextStyle(
-                              letterSpacing: 70.0,
+                              letterSpacing: 50.0,
                               fontFamily: 'Bebas Neue',
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
-                              fontSize: 165),
+                              fontSize: 125),
                         ),
                       ),
                       Container(
@@ -242,11 +286,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                         child: Text(
                           seconds[1],
                           style: const TextStyle(
-                              letterSpacing: 70.0,
+                              letterSpacing: 50.0,
                               fontFamily: 'Bebas Neue',
                               fontWeight: FontWeight.normal,
                               color: Colors.white,
-                              fontSize: 165),
+                              fontSize: 125),
                         ),
                       ),
                     ],
