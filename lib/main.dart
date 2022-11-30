@@ -301,7 +301,7 @@ import 'package:device_preview/device_preview.dart';
 
 void main() => runApp(
       DevicePreview(
-        enabled: !kReleaseMode,
+        enabled: false,
         builder: (context) => const MyApp(), // Wrap your app
       ),
     );
@@ -355,7 +355,8 @@ class _AnaSayfaState extends State<AnaSayfa> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/main_background2.png"),
+            image: AssetImage("assets/images/main_background.png"),
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(

@@ -58,23 +58,26 @@ class _CountdownTimerState extends State<CountdownTimer> {
     if (startStop) {
       // ignore: avoid_print
       print("startstop Inside=$startStop");
-      startTimer();
-    } else {
       stopTimer();
+    } else {
+      startTimer();
     }
   }
 
-  void startTimer() {
+  startTimer() {
     setState(() {
-      countdownTimer =
-          Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
-      startStop = false;
+      countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        cursorVisible ? cursorVisible = false : cursorVisible = true;
+
+        setCountDown();
+      });
+      startStop = true;
     });
   }
 
   stopTimer() {
     setState(() {
-      startStop = true;
+      startStop = false;
       countdownTimer!.cancel();
     });
   }
@@ -153,6 +156,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
+                  countdownTimer!.cancel();
 
                   SystemChrome.setPreferredOrientations([
                     DeviceOrientation.portraitUp,
@@ -180,7 +184,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/images/background2.png"),
+                  image: AssetImage("assets/images/background.png"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -194,33 +198,47 @@ class _CountdownTimerState extends State<CountdownTimer> {
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                              color: Colors.white10,
-                              borderRadius: BorderRadius.circular(12)),
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             minutes[0],
                             style: const TextStyle(
-                                letterSpacing: 70.0,
+                                letterSpacing: 50.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 165),
+                                fontSize: 140),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                              color: Colors.white10,
-                              borderRadius: BorderRadius.circular(12)),
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             minutes[1],
                             style: const TextStyle(
-                                letterSpacing: 70.0,
+                                letterSpacing: 50.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 165),
+                                fontSize: 140),
                           ),
                         ),
                         Opacity(
@@ -228,9 +246,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
                           child: const Text(
                             ':',
                             style: TextStyle(
-                              letterSpacing: 70.0,
+                              letterSpacing: 10.0,
                               color: Colors.white,
-                              fontSize: 217,
+                              fontSize: 150,
                               fontFamily: 'Bebas Neue',
                             ),
                           ),
@@ -238,33 +256,47 @@ class _CountdownTimerState extends State<CountdownTimer> {
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                              color: Colors.white10,
-                              borderRadius: BorderRadius.circular(12)),
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             seconds[0],
                             style: const TextStyle(
-                                letterSpacing: 70.0,
+                                letterSpacing: 50.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 165),
+                                fontSize: 140),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                              color: Colors.white10,
-                              borderRadius: BorderRadius.circular(12)),
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             seconds[1],
                             style: const TextStyle(
-                                letterSpacing: 70.0,
+                                letterSpacing: 50.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 165),
+                                fontSize: 140),
                           ),
                         ),
                       ],
@@ -273,10 +305,10 @@ class _CountdownTimerState extends State<CountdownTimer> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+            Container(
+              margin: const EdgeInsets.all(12.0),
+              child: Align(
+                alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
                     showMyDialog();
@@ -289,20 +321,22 @@ class _CountdownTimerState extends State<CountdownTimer> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                margin: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: BorderRadius.circular(12)),
-                child: IconButton(
-                    color: Colors.white,
-                    iconSize: 42.0,
-                    onPressed: () => startOrStop(),
-                    icon: startStop
-                        ? const Icon(Icons.play_arrow)
-                        : const Icon(Icons.pause)),
+            Container(
+              margin: const EdgeInsets.only(left: 55, bottom: 15),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(12)),
+                  child: IconButton(
+                      color: Colors.white,
+                      iconSize: 42.0,
+                      onPressed: () => startOrStop(),
+                      icon: startStop
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow)),
+                ),
               ),
             ),
           ],

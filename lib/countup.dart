@@ -17,6 +17,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   late int countMin;
   late Duration myDuration;
   bool cursorVisible = true;
+  bool startStop = true;
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
 
   @override
   dispose() {
+    countdownTimer1!.cancel();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -49,8 +51,32 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
     super.dispose();
   }
 
-  void stopTimer() {
-    setState(() => countdownTimer1!.cancel());
+  startOrStop() {
+    if (startStop) {
+      // ignore: avoid_print
+      print("startstop Inside=$startStop");
+      stopTimer();
+    } else {
+      startTimer();
+    }
+  }
+
+  startTimer() {
+    setState(() {
+      countdownTimer1 = Timer.periodic(const Duration(seconds: 1), (_) {
+        cursorVisible ? cursorVisible = false : cursorVisible = true;
+
+        setCountDown();
+      });
+      startStop = true;
+    });
+  }
+
+  stopTimer() {
+    setState(() {
+      startStop = false;
+      countdownTimer1!.cancel();
+    });
   }
 
   void setCountDown() {
@@ -68,6 +94,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   @override
   Widget build(BuildContext context) {
     String strDigits(int n) => n.toString().padLeft(2, '0');
+
     final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
@@ -114,194 +141,260 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                   Navigator.of(context).pop();
                 },
               ),
-              // TextButton(
-              //   child: const Text(
-              //     'Yep, stop',
-              //     style: TextStyle(
-              //       color: Colors.red,
-              //       fontSize: 17,
-              //       fontFamily: 'Bebas Neue',
-              //     ),
-              //   ),
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => const AnaSayfa(),
-              //       ),
-              //     );
-              //   },
-              // ),
+              TextButton(
+                child: const Text(
+                  'Yep, stop',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                    fontFamily: 'Bebas Neue',
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  countdownTimer1!.cancel();
+
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                    DeviceOrientation.portraitDown,
+                  ]);
+                },
+              ),
             ],
           );
         },
       );
     }
 
-    return Scaffold(
-      appBar: null,
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 30),
-                padding: const EdgeInsets.only(right: 10),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: () {
-                      showMyDialog();
-                    },
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 36,
+    return WillPopScope(
+      onWillPop: () async {
+        countdownTimer1!.cancel();
+        // ignore: avoid_print
+        print("geriye çıkıldı canım!");
+        return true;
+      },
+      child: Scaffold(
+        appBar: null,
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/background.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            hours[0],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            hours[1],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                        Opacity(
+                          opacity: cursorVisible ? 1 : 0.5,
+                          child: const Text(
+                            ':',
+                            style: TextStyle(
+                              letterSpacing: 10.0,
+                              color: Colors.white,
+                              fontSize: 130,
+                              fontFamily: 'Bebas Neue',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            minutes[0],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            minutes[1],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                        Opacity(
+                          opacity: cursorVisible ? 1 : 0.5,
+                          child: const Text(
+                            ':',
+                            style: TextStyle(
+                              letterSpacing: 10.0,
+                              color: Colors.white,
+                              fontSize: 130,
+                              fontFamily: 'Bebas Neue',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            seconds[0],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(12),
+                            border: startStop
+                                ? null
+                                : Border.all(
+                                    color: Color.fromARGB(113, 244, 67, 54),
+                                    width: 3,
+                                  ),
+                          ),
+                          margin: const EdgeInsets.all(8),
+                          child: Text(
+                            seconds[1],
+                            style: const TextStyle(
+                                letterSpacing: 40.0,
+                                fontFamily: 'Bebas Neue',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 115),
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(14.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () {
+                    showMyDialog();
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 36,
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          hours[0],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          hours[0],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                      Opacity(
-                        opacity: cursorVisible ? 1 : 0.2,
-                        child: const Text(
-                          ':',
-                          style: TextStyle(
-                            letterSpacing: 10.0,
-                            color: Colors.white,
-                            fontSize: 140,
-                            fontFamily: 'Bebas Neue',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          minutes[0],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          minutes[1],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                      Opacity(
-                        opacity: cursorVisible ? 1 : 0.2,
-                        child: const Text(
-                          ':',
-                          style: TextStyle(
-                            letterSpacing: 10.0,
-                            color: Colors.white,
-                            fontSize: 140,
-                            fontFamily: 'Bebas Neue',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          seconds[0],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white10,
-                            borderRadius: BorderRadius.circular(12)),
-                        margin: const EdgeInsets.all(8),
-                        child: Text(
-                          seconds[1],
-                          style: const TextStyle(
-                              letterSpacing: 50.0,
-                              fontFamily: 'Bebas Neue',
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 125),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 55, bottom: 15),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(12)),
+                  child: IconButton(
+                      color: Colors.white,
+                      iconSize: 42.0,
+                      onPressed: () => startOrStop(),
+                      icon: startStop
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow)),
+                ),
               ),
-              const SizedBox(
-                height: 75,
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
