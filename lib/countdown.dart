@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/main.dart';
+import 'package:lottie/lottie.dart';
 
 // ignore: must_be_immutable
 class CountdownTimer extends StatefulWidget {
@@ -13,13 +14,18 @@ class CountdownTimer extends StatefulWidget {
   State<CountdownTimer> createState() => _CountdownTimerState();
 }
 
-class _CountdownTimerState extends State<CountdownTimer> {
+class _CountdownTimerState extends State<CountdownTimer>
+    with TickerProviderStateMixin {
   Timer? countdownTimer;
+  Timer? countdownTimer2;
 
   late int countMin;
   late Duration myDuration;
   bool cursorVisible = true;
   bool startStop = true;
+  bool audioStart = false;
+  final audio = AudioPlayer();
+  AnimationController? _animationController;
 
   @override
   void initState() {
@@ -30,21 +36,33 @@ class _CountdownTimerState extends State<CountdownTimer> {
     myDuration = Duration(minutes: widget.countMin);
 
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      cursorVisible ? cursorVisible = false : cursorVisible = true;
       setState(() {});
 
       setCountDown();
+    });
+
+    countdownTimer2 = Timer.periodic(const Duration(seconds: 1), (_) {
+      cursorVisible ? cursorVisible = false : cursorVisible = true;
+      setState(() {});
+      setCountDown2();
     });
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
+
+    audio.play(
+        AssetSource('audios/sfx_amb_forest_spring_afternoon-01-6447.mp3'));
+    _animationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
   }
 
   @override
   dispose() {
     countdownTimer!.cancel();
+    countdownTimer2!.cancel();
+    audio.stop();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -67,8 +85,6 @@ class _CountdownTimerState extends State<CountdownTimer> {
   startTimer() {
     setState(() {
       countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-        cursorVisible ? cursorVisible = false : cursorVisible = true;
-
         setCountDown();
       });
       startStop = true;
@@ -91,6 +107,14 @@ class _CountdownTimerState extends State<CountdownTimer> {
       } else {
         myDuration = Duration(seconds: seconds);
       }
+    });
+  }
+
+  void setCountDown2() {
+    const reduceSecondsBy = 1;
+    setState(() {
+      // ignore: unused_local_variable
+      final seconds = myDuration.inSeconds + reduceSecondsBy;
     });
   }
 
@@ -141,6 +165,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   ),
                 ),
                 onPressed: () {
+                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.of(context).pop();
                 },
               ),
@@ -154,9 +179,11 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   ),
                 ),
                 onPressed: () {
+                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.pop(context);
                   Navigator.pop(context);
                   countdownTimer!.cancel();
+                  countdownTimer2!.cancel();
 
                   SystemChrome.setPreferredOrientations([
                     DeviceOrientation.portraitUp,
@@ -173,6 +200,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
     return WillPopScope(
       onWillPop: () async {
         countdownTimer!.cancel();
+        countdownTimer2!.cancel();
         // ignore: avoid_print
         print("geriye çıkıldı canım!");
         return true;
@@ -202,10 +230,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -225,10 +256,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -260,10 +294,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -283,10 +320,13 @@ class _CountdownTimerState extends State<CountdownTimer> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -311,6 +351,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     showMyDialog();
                   },
                   icon: const Icon(
@@ -332,10 +373,36 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   child: IconButton(
                       color: Colors.white,
                       iconSize: 42.0,
-                      onPressed: () => startOrStop(),
+                      onPressed: () {
+                        AudioPlayer()
+                            .play(AssetSource('audios/buttonClick.mp3'));
+                        startOrStop();
+                      },
                       icon: startStop
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow)),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                _animationController?.forward();
+                _animationController = AnimationController(
+                    vsync: this, duration: const Duration(milliseconds: 800));
+              },
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  margin: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Lottie.asset(
+                    'assets/animations/LoudMute_Preview.json',
+                    controller: _animationController,
+                    height: 100,
+                    repeat: false,
+                  ),
                 ),
               ),
             ),

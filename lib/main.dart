@@ -292,7 +292,7 @@
 //   Todo(this.id, this.myTodo);
 // }
 
-import 'package:flutter/foundation.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'countdown.dart';
@@ -375,6 +375,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
                   ),
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -406,6 +407,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
                   ),
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -437,6 +439,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
                   ),
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -468,6 +471,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         const EdgeInsets.symmetric(horizontal: 82, vertical: 5),
                   ),
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     Navigator.push(
                       context,
                       MaterialPageRoute(

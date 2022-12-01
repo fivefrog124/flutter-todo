@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/main.dart';
 
 // ignore: must_be_immutable
 class CountdownTimer1 extends StatefulWidget {
@@ -13,6 +13,7 @@ class CountdownTimer1 extends StatefulWidget {
 
 class _CountdownTimer1State extends State<CountdownTimer1> {
   Timer? countdownTimer1;
+  Timer? countdownTimer2;
 
   late int countMin;
   late Duration myDuration;
@@ -28,9 +29,14 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
     myDuration = const Duration(hours: 0);
 
     countdownTimer1 = Timer.periodic(const Duration(seconds: 1), (_) {
-      cursorVisible ? cursorVisible = false : cursorVisible = true;
       setState(() {});
       setCountDown();
+    });
+
+    countdownTimer2 = Timer.periodic(const Duration(seconds: 1), (_) {
+      cursorVisible ? cursorVisible = false : cursorVisible = true;
+      setState(() {});
+      setCountDown2();
     });
 
     SystemChrome.setPreferredOrientations([
@@ -42,6 +48,8 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   @override
   dispose() {
     countdownTimer1!.cancel();
+    countdownTimer2!.cancel();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -64,8 +72,6 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   startTimer() {
     setState(() {
       countdownTimer1 = Timer.periodic(const Duration(seconds: 1), (_) {
-        cursorVisible ? cursorVisible = false : cursorVisible = true;
-
         setCountDown();
       });
       startStop = true;
@@ -88,6 +94,14 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
       } else {
         myDuration = Duration(seconds: seconds);
       }
+    });
+  }
+
+  void setCountDown2() {
+    const reduceSecondsBy = 1;
+    setState(() {
+      // ignore: unused_local_variable
+      final seconds = myDuration.inSeconds + reduceSecondsBy;
     });
   }
 
@@ -138,6 +152,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                   ),
                 ),
                 onPressed: () {
+                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.of(context).pop();
                 },
               ),
@@ -151,9 +166,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                   ),
                 ),
                 onPressed: () {
+                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.pop(context);
                   Navigator.pop(context);
                   countdownTimer1!.cancel();
+                  countdownTimer2!.cancel();
 
                   SystemChrome.setPreferredOrientations([
                     DeviceOrientation.portraitUp,
@@ -170,6 +187,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
     return WillPopScope(
       onWillPop: () async {
         countdownTimer1!.cancel();
+        countdownTimer2!.cancel();
         // ignore: avoid_print
         print("geriye çıkıldı canım!");
         return true;
@@ -199,10 +217,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -222,10 +243,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -257,10 +281,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -280,10 +307,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -315,10 +345,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -338,10 +371,13 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
-                                : Border.all(
-                                    color: Color.fromARGB(113, 244, 67, 54),
-                                    width: 3,
-                                  ),
+                                : cursorVisible
+                                    ? null
+                                    : Border.all(
+                                        color: const Color.fromARGB(
+                                            150, 196, 68, 68),
+                                        width: 1,
+                                      ),
                           ),
                           margin: const EdgeInsets.all(8),
                           child: Text(
@@ -366,6 +402,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
+                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     showMyDialog();
                   },
                   icon: const Icon(
@@ -387,7 +424,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                   child: IconButton(
                       color: Colors.white,
                       iconSize: 42.0,
-                      onPressed: () => startOrStop(),
+                      onPressed: () {
+                        AudioPlayer()
+                            .play(AssetSource('audios/buttonClick.mp3'));
+                        startOrStop();
+                      },
                       icon: startStop
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow)),
