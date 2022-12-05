@@ -24,9 +24,16 @@ class _CountdownTimerState extends State<CountdownTimer>
   bool cursorVisible = true;
   bool startStop = true;
   bool audioStart = false;
+  bool lottieStart = true;
   final audio = AudioPlayer();
+  final ambientAudio = AudioPlayer();
   AnimationController? _animationController;
-
+  int _value = 0;
+  bool isMediaPlayerRunning = false;
+  bool forest = false;
+  bool campfire = false;
+  bool coffee = false;
+  bool rain = false;
   @override
   void initState() {
     super.initState();
@@ -54,15 +61,21 @@ class _CountdownTimerState extends State<CountdownTimer>
 
     audio.play(
         AssetSource('audios/sfx_amb_forest_spring_afternoon-01-6447.mp3'));
-    _animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+
+    //playMediaPlayer("sfx_amb_forest_spring_afternoon-01-6447.mp3");
+
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    _animationController?.value = 0.58;
   }
 
   @override
   dispose() {
     countdownTimer!.cancel();
     countdownTimer2!.cancel();
-    audio.stop();
+
+    audio.pause();
+    ambientAudio.pause();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -116,6 +129,17 @@ class _CountdownTimerState extends State<CountdownTimer>
       // ignore: unused_local_variable
       final seconds = myDuration.inSeconds + reduceSecondsBy;
     });
+  }
+
+  playMediaPlayer(String path) {
+    if (isMediaPlayerRunning || forest || campfire || coffee || rain) {
+      ambientAudio.stop();
+
+      isMediaPlayerRunning = false;
+    }
+    ambientAudio.play(AssetSource('audios/$path'));
+
+    isMediaPlayerRunning = true;
   }
 
   @override
@@ -226,7 +250,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white10,
+                            color: const Color.fromARGB(18, 255, 255, 255),
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
@@ -242,17 +266,17 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: Text(
                             minutes[0],
                             style: const TextStyle(
-                                letterSpacing: 50.0,
+                                letterSpacing: 60.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 140),
+                                fontSize: 160),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white10,
+                            color: const Color.fromARGB(18, 255, 255, 255),
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
@@ -268,11 +292,11 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: Text(
                             minutes[1],
                             style: const TextStyle(
-                                letterSpacing: 50.0,
+                                letterSpacing: 60.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 140),
+                                fontSize: 160),
                           ),
                         ),
                         Opacity(
@@ -280,9 +304,9 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: const Text(
                             ':',
                             style: TextStyle(
-                              letterSpacing: 10.0,
+                              letterSpacing: 15.0,
                               color: Colors.white,
-                              fontSize: 150,
+                              fontSize: 160,
                               fontFamily: 'Bebas Neue',
                             ),
                           ),
@@ -290,7 +314,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white10,
+                            color: const Color.fromARGB(18, 255, 255, 255),
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
@@ -306,17 +330,17 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: Text(
                             seconds[0],
                             style: const TextStyle(
-                                letterSpacing: 50.0,
+                                letterSpacing: 60.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 140),
+                                fontSize: 160),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.only(top: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white10,
+                            color: const Color.fromARGB(18, 255, 255, 255),
                             borderRadius: BorderRadius.circular(12),
                             border: startStop
                                 ? null
@@ -332,11 +356,11 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: Text(
                             seconds[1],
                             style: const TextStyle(
-                                letterSpacing: 50.0,
+                                letterSpacing: 60.0,
                                 fontFamily: 'Bebas Neue',
                                 fontWeight: FontWeight.normal,
                                 color: Colors.white,
-                                fontSize: 140),
+                                fontSize: 160),
                           ),
                         ),
                       ],
@@ -346,7 +370,7 @@ class _CountdownTimerState extends State<CountdownTimer>
               ),
             ),
             Container(
-              margin: const EdgeInsets.all(12.0),
+              margin: const EdgeInsets.all(15.0),
               child: Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
@@ -363,7 +387,7 @@ class _CountdownTimerState extends State<CountdownTimer>
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(left: 55, bottom: 15),
+              margin: const EdgeInsets.only(left: 55, bottom: 18),
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Container(
@@ -386,24 +410,184 @@ class _CountdownTimerState extends State<CountdownTimer>
             ),
             GestureDetector(
               onTap: () {
-                _animationController?.forward();
-                _animationController = AnimationController(
-                    vsync: this, duration: const Duration(milliseconds: 800));
+                lottieStart = !lottieStart;
+
+                if (lottieStart) {
+                  //_animationController?.forward();
+
+                  _animationController?.animateTo(0.58);
+
+                  audio.resume();
+                  // ignore: avoid_print
+                  print("ileri");
+                } else {
+                  _animationController?.reverse();
+                  audio.pause();
+                  // ignore: avoid_print
+                  print("reverse");
+                }
               },
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
-                  margin: const EdgeInsets.all(12.0),
+                  margin: const EdgeInsets.all(18.0),
                   decoration: BoxDecoration(
-                      color: Colors.white10,
+                      color: Colors.white12,
                       borderRadius: BorderRadius.circular(12)),
                   child: Lottie.asset(
                     'assets/animations/LoudMute_Preview.json',
                     controller: _animationController,
-                    height: 100,
+                    height: 60,
                     repeat: false,
                   ),
                 ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _value = 1;
+                      forest = !forest;
+                      if (forest) {
+                        playMediaPlayer("forest.mp3");
+                        // ignore: avoid_print
+                        print('_value: $_value');
+                      } else {
+                        ambientAudio.pause();
+                      }
+                    }),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 1 && forest
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 1 && forest
+                          ? Image.asset(
+                              'assets/images/nature.png',
+                            )
+                          : Image.asset(
+                              'assets/images/nature_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _value = 2;
+                      campfire = !campfire;
+                      if (campfire) {
+                        playMediaPlayer("campfire.mp3");
+                        print('_value: $_value');
+                      } else {
+                        ambientAudio.pause();
+                      }
+                    }),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 2 && campfire
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 2 && campfire
+                          ? Image.asset(
+                              'assets/images/camp_fire.png',
+                            )
+                          : Image.asset(
+                              'assets/images/camp_fire_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _value = 3;
+                      coffee = !coffee;
+                      if (coffee) {
+                        playMediaPlayer("coffeeshop.mp3");
+                      } else {
+                        ambientAudio.pause();
+                      }
+                    }),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 3 && coffee
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 3 && coffee
+                          ? Image.asset(
+                              'assets/images/coffee.png',
+                            )
+                          : Image.asset(
+                              'assets/images/coffee_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() {
+                      _value = 4;
+                      rain = !rain;
+                      if (rain) {
+                        playMediaPlayer("rain.mp3");
+                      } else {
+                        ambientAudio.pause();
+                      }
+                    }),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 4 && rain
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 4 && rain
+                          ? Image.asset(
+                              'assets/images/rain.png',
+                            )
+                          : Image.asset(
+                              'assets/images/rain_off1.png',
+                            ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
