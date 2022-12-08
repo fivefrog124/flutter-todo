@@ -1,8 +1,11 @@
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+
 import 'package:lottie/lottie.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
+// import 'package:just_audio/just_audio.dart';
 
 // ignore: must_be_immutable
 class CountdownTimer extends StatefulWidget {
@@ -26,14 +29,14 @@ class _CountdownTimerState extends State<CountdownTimer>
   bool audioStart = false;
   bool lottieStart = true;
   final audio = AudioPlayer();
-  final ambientAudio = AudioPlayer();
+  final backgroundAudio = AssetsAudioPlayer();
+  final ambientAudio = AssetsAudioPlayer();
+
   AnimationController? _animationController;
+
   int _value = 0;
   bool isMediaPlayerRunning = false;
-  bool forest = false;
-  bool campfire = false;
-  bool coffee = false;
-  bool rain = false;
+
   @override
   void initState() {
     super.initState();
@@ -59,14 +62,12 @@ class _CountdownTimerState extends State<CountdownTimer>
       DeviceOrientation.landscapeLeft,
     ]);
 
-    audio.play(
-        AssetSource('audios/sfx_amb_forest_spring_afternoon-01-6447.mp3'));
-
-    //playMediaPlayer("sfx_amb_forest_spring_afternoon-01-6447.mp3");
+    backgroundAudio.open(Audio('assets/audios/background_sound.mp3'),
+        loopMode: LoopMode.playlist);
 
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
-    _animationController?.value = 0.58;
+        vsync: this, duration: const Duration(milliseconds: 1500));
+    _animationController?.value = 0.1;
   }
 
   @override
@@ -74,7 +75,7 @@ class _CountdownTimerState extends State<CountdownTimer>
     countdownTimer!.cancel();
     countdownTimer2!.cancel();
 
-    audio.pause();
+    backgroundAudio.pause();
     ambientAudio.pause();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -131,17 +132,6 @@ class _CountdownTimerState extends State<CountdownTimer>
     });
   }
 
-  playMediaPlayer(String path) {
-    if (isMediaPlayerRunning || forest || campfire || coffee || rain) {
-      ambientAudio.stop();
-
-      isMediaPlayerRunning = false;
-    }
-    ambientAudio.play(AssetSource('audios/$path'));
-
-    isMediaPlayerRunning = true;
-  }
-
   @override
   Widget build(BuildContext context) {
     String strDigits(int n) => n.toString().padLeft(2, '0');
@@ -189,7 +179,6 @@ class _CountdownTimerState extends State<CountdownTimer>
                   ),
                 ),
                 onPressed: () {
-                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.of(context).pop();
                 },
               ),
@@ -203,7 +192,6 @@ class _CountdownTimerState extends State<CountdownTimer>
                   ),
                 ),
                 onPressed: () {
-                  AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                   Navigator.pop(context);
                   Navigator.pop(context);
                   countdownTimer!.cancel();
@@ -375,7 +363,6 @@ class _CountdownTimerState extends State<CountdownTimer>
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
-                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     showMyDialog();
                   },
                   icon: const Icon(
@@ -398,8 +385,6 @@ class _CountdownTimerState extends State<CountdownTimer>
                       color: Colors.white,
                       iconSize: 42.0,
                       onPressed: () {
-                        AudioPlayer()
-                            .play(AssetSource('audios/buttonClick.mp3'));
                         startOrStop();
                       },
                       icon: startStop
@@ -410,19 +395,18 @@ class _CountdownTimerState extends State<CountdownTimer>
             ),
             GestureDetector(
               onTap: () {
-                lottieStart = !lottieStart;
-
                 if (lottieStart) {
-                  //_animationController?.forward();
+                  lottieStart = false;
+                  _animationController?.animateTo(0.33);
 
-                  _animationController?.animateTo(0.58);
+                  backgroundAudio.pause();
 
-                  audio.resume();
                   // ignore: avoid_print
                   print("ileri");
                 } else {
                   _animationController?.reverse();
-                  audio.pause();
+                  backgroundAudio.play();
+                  lottieStart = true;
                   // ignore: avoid_print
                   print("reverse");
                 }
@@ -430,14 +414,15 @@ class _CountdownTimerState extends State<CountdownTimer>
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
+                  padding: const EdgeInsets.all(6.0),
                   margin: const EdgeInsets.all(18.0),
                   decoration: BoxDecoration(
                       color: Colors.white12,
                       borderRadius: BorderRadius.circular(12)),
                   child: Lottie.asset(
-                    'assets/animations/LoudMute_Preview.json',
+                    'assets/animations/Main.json',
                     controller: _animationController,
-                    height: 60,
+                    height: 48,
                     repeat: false,
                   ),
                 ),
@@ -449,17 +434,20 @@ class _CountdownTimerState extends State<CountdownTimer>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: () => setState(() {
-                      _value = 1;
-                      forest = !forest;
-                      if (forest) {
-                        playMediaPlayer("forest.mp3");
-                        // ignore: avoid_print
-                        print('_value: $_value');
-                      } else {
-                        ambientAudio.pause();
+                    onTap: () {
+                      setState(() {
+                        if (_value == 1) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 1;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/forest.mp3'),
+                            loopMode: LoopMode.playlist);
                       }
-                    }),
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(
                         bottom: 20,
@@ -469,13 +457,13 @@ class _CountdownTimerState extends State<CountdownTimer>
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                           color: Colors.white12,
-                          border: _value == 1 && forest
+                          border: _value == 1
                               ? Border.all(color: Colors.white)
                               : null,
                           borderRadius: BorderRadius.circular(8)),
                       height: 56,
                       width: 56,
-                      child: _value == 1 && forest
+                      child: _value == 1
                           ? Image.asset(
                               'assets/images/nature.png',
                             )
@@ -485,16 +473,20 @@ class _CountdownTimerState extends State<CountdownTimer>
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => setState(() {
-                      _value = 2;
-                      campfire = !campfire;
-                      if (campfire) {
-                        playMediaPlayer("campfire.mp3");
-                        print('_value: $_value');
-                      } else {
-                        ambientAudio.pause();
+                    onTap: () {
+                      setState(() {
+                        if (_value == 2) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 2;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/campfire.mp3'),
+                            loopMode: LoopMode.playlist);
                       }
-                    }),
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(
                         bottom: 20,
@@ -504,13 +496,13 @@ class _CountdownTimerState extends State<CountdownTimer>
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                           color: Colors.white12,
-                          border: _value == 2 && campfire
+                          border: _value == 2
                               ? Border.all(color: Colors.white)
                               : null,
                           borderRadius: BorderRadius.circular(8)),
                       height: 56,
                       width: 56,
-                      child: _value == 2 && campfire
+                      child: _value == 2
                           ? Image.asset(
                               'assets/images/camp_fire.png',
                             )
@@ -520,15 +512,20 @@ class _CountdownTimerState extends State<CountdownTimer>
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => setState(() {
-                      _value = 3;
-                      coffee = !coffee;
-                      if (coffee) {
-                        playMediaPlayer("coffeeshop.mp3");
-                      } else {
-                        ambientAudio.pause();
+                    onTap: () {
+                      setState(() {
+                        if (_value == 3) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 3;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/coffeeshop.mp3'),
+                            loopMode: LoopMode.playlist);
                       }
-                    }),
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(
                         bottom: 20,
@@ -538,13 +535,13 @@ class _CountdownTimerState extends State<CountdownTimer>
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                           color: Colors.white12,
-                          border: _value == 3 && coffee
+                          border: _value == 3
                               ? Border.all(color: Colors.white)
                               : null,
                           borderRadius: BorderRadius.circular(8)),
                       height: 56,
                       width: 56,
-                      child: _value == 3 && coffee
+                      child: _value == 3
                           ? Image.asset(
                               'assets/images/coffee.png',
                             )
@@ -554,15 +551,21 @@ class _CountdownTimerState extends State<CountdownTimer>
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => setState(() {
-                      _value = 4;
-                      rain = !rain;
-                      if (rain) {
-                        playMediaPlayer("rain.mp3");
-                      } else {
-                        ambientAudio.pause();
+                    onTap: () {
+                      setState(() {
+                        if (_value == 4) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 4;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.setVolume(1.0);
+                        ambientAudio.open(Audio('assets/audios/rain.mp3'),
+                            loopMode: LoopMode.playlist);
                       }
-                    }),
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(
                         bottom: 20,
@@ -572,13 +575,13 @@ class _CountdownTimerState extends State<CountdownTimer>
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                           color: Colors.white12,
-                          border: _value == 4 && rain
+                          border: _value == 4
                               ? Border.all(color: Colors.white)
                               : null,
                           borderRadius: BorderRadius.circular(8)),
                       height: 56,
                       width: 56,
-                      child: _value == 4 && rain
+                      child: _value == 4
                           ? Image.asset(
                               'assets/images/rain.png',
                             )
