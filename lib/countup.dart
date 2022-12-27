@@ -1,17 +1,24 @@
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:lottie/lottie.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // ignore: must_be_immutable
 class CountdownTimer1 extends StatefulWidget {
-  const CountdownTimer1({super.key});
+  int themeValue;
+
+  CountdownTimer1({super.key, required this.themeValue});
 
   @override
   State<CountdownTimer1> createState() => _CountdownTimer1State();
 }
 
-class _CountdownTimer1State extends State<CountdownTimer1> {
+class _CountdownTimer1State extends State<CountdownTimer1>
+    with TickerProviderStateMixin {
   Timer? countdownTimer1;
   Timer? countdownTimer2;
 
@@ -19,7 +26,15 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
   late Duration myDuration;
   bool cursorVisible = true;
   bool startStop = true;
+  bool audioStart = false;
+  bool lottieStart = true;
+  final audio = AudioPlayer();
+  final backgroundAudio = AssetsAudioPlayer();
+  final ambientAudio = AssetsAudioPlayer();
 
+  AnimationController? _animationController;
+
+  int _value = 0;
   @override
   void initState() {
     super.initState();
@@ -43,6 +58,12 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
+    backgroundAudio.open(Audio('assets/audios/background_sound.mp3'),
+        loopMode: LoopMode.playlist);
+
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1500));
+    _animationController?.value = 0.1;
   }
 
   @override
@@ -50,6 +71,8 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
     countdownTimer1!.cancel();
     countdownTimer2!.cancel();
 
+    backgroundAudio.pause();
+    ambientAudio.pause();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -197,9 +220,28 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
         body: Stack(
           children: [
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/images/background.png"),
+                  image: widget.themeValue == 1
+                      ? const AssetImage(
+                          "assets/images/background2_global_warming.png")
+                      : widget.themeValue == 2
+                          ? const AssetImage(
+                              "assets/images/background2_abstract_truths.png")
+                          : widget.themeValue == 3
+                              ? const AssetImage(
+                                  "assets/images/background2_sahara_desert.png")
+                              : widget.themeValue == 4
+                                  ? const AssetImage(
+                                      "assets/images/background2_abysmal_aqua.png")
+                                  : widget.themeValue == 5
+                                      ? const AssetImage(
+                                          "assets/images/background2_1.png")
+                                      : widget.themeValue == 6
+                                          ? const AssetImage(
+                                              "assets/images/background2_2.png")
+                                          : const AssetImage(
+                                              "assets/images/background2_mor.png"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -228,12 +270,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             hours[0],
-                            style: const TextStyle(
-                                letterSpacing: 40.0,
-                                fontFamily: 'Bebas Neue',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 115),
+                            style: widget.themeValue == 1
+                                ? GoogleFonts.redHatDisplay(
+                                    fontSize: 115,
+                                    color: Colors.white,
+                                    letterSpacing: 40.0,
+                                    fontWeight: FontWeight.normal,
+                                  )
+                                : widget.themeValue == 2
+                                    ? GoogleFonts.workSans(
+                                        fontSize: 115,
+                                        color: Colors.white,
+                                        letterSpacing: 40.0,
+                                        fontWeight: FontWeight.normal,
+                                      )
+                                    : widget.themeValue == 3
+                                        ? GoogleFonts.barlowSemiCondensed(
+                                            fontSize: 115,
+                                            color: Colors.white,
+                                            letterSpacing: 40.0,
+                                            fontWeight: FontWeight.normal,
+                                          )
+                                        : widget.themeValue == 4
+                                            ? GoogleFonts.ubuntu(
+                                                fontSize: 115,
+                                                color: Colors.white,
+                                                letterSpacing: 40.0,
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : widget.themeValue == 5
+                                                ? GoogleFonts.sourceSansPro(
+                                                    fontSize: 115,
+                                                    color: Colors.white,
+                                                    letterSpacing: 40.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  )
+                                                : widget.themeValue == 6
+                                                    ? GoogleFonts.urbanist(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      )
+                                                    : GoogleFonts.bebasNeue(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
                           ),
                         ),
                         Container(
@@ -254,12 +341,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             hours[1],
-                            style: const TextStyle(
-                                letterSpacing: 40.0,
-                                fontFamily: 'Bebas Neue',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 115),
+                            style: widget.themeValue == 1
+                                ? GoogleFonts.redHatDisplay(
+                                    fontSize: 115,
+                                    color: Colors.white,
+                                    letterSpacing: 40.0,
+                                    fontWeight: FontWeight.normal,
+                                  )
+                                : widget.themeValue == 2
+                                    ? GoogleFonts.workSans(
+                                        fontSize: 115,
+                                        color: Colors.white,
+                                        letterSpacing: 40.0,
+                                        fontWeight: FontWeight.normal,
+                                      )
+                                    : widget.themeValue == 3
+                                        ? GoogleFonts.barlowSemiCondensed(
+                                            fontSize: 115,
+                                            color: Colors.white,
+                                            letterSpacing: 40.0,
+                                            fontWeight: FontWeight.normal,
+                                          )
+                                        : widget.themeValue == 4
+                                            ? GoogleFonts.ubuntu(
+                                                fontSize: 115,
+                                                color: Colors.white,
+                                                letterSpacing: 40.0,
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : widget.themeValue == 5
+                                                ? GoogleFonts.sourceSansPro(
+                                                    fontSize: 115,
+                                                    color: Colors.white,
+                                                    letterSpacing: 40.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  )
+                                                : widget.themeValue == 6
+                                                    ? GoogleFonts.urbanist(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      )
+                                                    : GoogleFonts.bebasNeue(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
                           ),
                         ),
                         Opacity(
@@ -318,12 +450,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             minutes[1],
-                            style: const TextStyle(
-                                letterSpacing: 40.0,
-                                fontFamily: 'Bebas Neue',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 115),
+                            style: widget.themeValue == 1
+                                ? GoogleFonts.redHatDisplay(
+                                    fontSize: 115,
+                                    color: Colors.white,
+                                    letterSpacing: 40.0,
+                                    fontWeight: FontWeight.normal,
+                                  )
+                                : widget.themeValue == 2
+                                    ? GoogleFonts.workSans(
+                                        fontSize: 115,
+                                        color: Colors.white,
+                                        letterSpacing: 40.0,
+                                        fontWeight: FontWeight.normal,
+                                      )
+                                    : widget.themeValue == 3
+                                        ? GoogleFonts.barlowSemiCondensed(
+                                            fontSize: 115,
+                                            color: Colors.white,
+                                            letterSpacing: 40.0,
+                                            fontWeight: FontWeight.normal,
+                                          )
+                                        : widget.themeValue == 4
+                                            ? GoogleFonts.ubuntu(
+                                                fontSize: 115,
+                                                color: Colors.white,
+                                                letterSpacing: 40.0,
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : widget.themeValue == 5
+                                                ? GoogleFonts.sourceSansPro(
+                                                    fontSize: 115,
+                                                    color: Colors.white,
+                                                    letterSpacing: 40.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  )
+                                                : widget.themeValue == 6
+                                                    ? GoogleFonts.urbanist(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      )
+                                                    : GoogleFonts.bebasNeue(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
                           ),
                         ),
                         Opacity(
@@ -356,12 +533,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             seconds[0],
-                            style: const TextStyle(
-                                letterSpacing: 40.0,
-                                fontFamily: 'Bebas Neue',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 115),
+                            style: widget.themeValue == 1
+                                ? GoogleFonts.redHatDisplay(
+                                    fontSize: 115,
+                                    color: Colors.white,
+                                    letterSpacing: 40.0,
+                                    fontWeight: FontWeight.normal,
+                                  )
+                                : widget.themeValue == 2
+                                    ? GoogleFonts.workSans(
+                                        fontSize: 115,
+                                        color: Colors.white,
+                                        letterSpacing: 40.0,
+                                        fontWeight: FontWeight.normal,
+                                      )
+                                    : widget.themeValue == 3
+                                        ? GoogleFonts.barlowSemiCondensed(
+                                            fontSize: 115,
+                                            color: Colors.white,
+                                            letterSpacing: 40.0,
+                                            fontWeight: FontWeight.normal,
+                                          )
+                                        : widget.themeValue == 4
+                                            ? GoogleFonts.ubuntu(
+                                                fontSize: 115,
+                                                color: Colors.white,
+                                                letterSpacing: 40.0,
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : widget.themeValue == 5
+                                                ? GoogleFonts.sourceSansPro(
+                                                    fontSize: 115,
+                                                    color: Colors.white,
+                                                    letterSpacing: 40.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  )
+                                                : widget.themeValue == 6
+                                                    ? GoogleFonts.urbanist(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      )
+                                                    : GoogleFonts.bebasNeue(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
                           ),
                         ),
                         Container(
@@ -382,12 +604,57 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                           margin: const EdgeInsets.all(8),
                           child: Text(
                             seconds[1],
-                            style: const TextStyle(
-                                letterSpacing: 40.0,
-                                fontFamily: 'Bebas Neue',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 115),
+                            style: widget.themeValue == 1
+                                ? GoogleFonts.redHatDisplay(
+                                    fontSize: 115,
+                                    color: Colors.white,
+                                    letterSpacing: 40.0,
+                                    fontWeight: FontWeight.normal,
+                                  )
+                                : widget.themeValue == 2
+                                    ? GoogleFonts.workSans(
+                                        fontSize: 115,
+                                        color: Colors.white,
+                                        letterSpacing: 40.0,
+                                        fontWeight: FontWeight.normal,
+                                      )
+                                    : widget.themeValue == 3
+                                        ? GoogleFonts.barlowSemiCondensed(
+                                            fontSize: 115,
+                                            color: Colors.white,
+                                            letterSpacing: 40.0,
+                                            fontWeight: FontWeight.normal,
+                                          )
+                                        : widget.themeValue == 4
+                                            ? GoogleFonts.ubuntu(
+                                                fontSize: 115,
+                                                color: Colors.white,
+                                                letterSpacing: 40.0,
+                                                fontWeight: FontWeight.normal,
+                                              )
+                                            : widget.themeValue == 5
+                                                ? GoogleFonts.sourceSansPro(
+                                                    fontSize: 115,
+                                                    color: Colors.white,
+                                                    letterSpacing: 40.0,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  )
+                                                : widget.themeValue == 6
+                                                    ? GoogleFonts.urbanist(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      )
+                                                    : GoogleFonts.bebasNeue(
+                                                        fontSize: 115,
+                                                        color: Colors.white,
+                                                        letterSpacing: 40.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
                           ),
                         ),
                       ],
@@ -397,12 +664,11 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.all(14.0),
+              margin: const EdgeInsets.all(15.0),
               child: Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
-                    AudioPlayer().play(AssetSource('audios/buttonClick.mp3'));
                     showMyDialog();
                   },
                   icon: const Icon(
@@ -414,7 +680,7 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(left: 55, bottom: 15),
+              margin: const EdgeInsets.only(left: 55, bottom: 18),
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Container(
@@ -425,14 +691,212 @@ class _CountdownTimer1State extends State<CountdownTimer1> {
                       color: Colors.white,
                       iconSize: 42.0,
                       onPressed: () {
-                        AudioPlayer()
-                            .play(AssetSource('audios/buttonClick.mp3'));
                         startOrStop();
                       },
                       icon: startStop
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow)),
                 ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (lottieStart) {
+                  lottieStart = false;
+                  _animationController?.animateTo(0.33);
+
+                  backgroundAudio.pause();
+
+                  // ignore: avoid_print
+                  print("ileri");
+                } else {
+                  _animationController?.reverse();
+                  backgroundAudio.play();
+                  lottieStart = true;
+                  // ignore: avoid_print
+                  print("reverse");
+                }
+              },
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  margin: const EdgeInsets.all(18.0),
+                  decoration: BoxDecoration(
+                      color: Colors.white12,
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Lottie.asset(
+                    'assets/animations/Main.json',
+                    controller: _animationController,
+                    height: 48,
+                    repeat: false,
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_value == 1) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 1;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/forest.mp3'),
+                            loopMode: LoopMode.playlist);
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 1
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 1
+                          ? Image.asset(
+                              'assets/images/nature.png',
+                            )
+                          : Image.asset(
+                              'assets/images/nature_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_value == 2) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 2;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/campfire.mp3'),
+                            loopMode: LoopMode.playlist);
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 2
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 2
+                          ? Image.asset(
+                              'assets/images/camp_fire.png',
+                            )
+                          : Image.asset(
+                              'assets/images/camp_fire_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_value == 3) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 3;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.open(Audio('assets/audios/coffeeshop.mp3'),
+                            loopMode: LoopMode.playlist);
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 3
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 3
+                          ? Image.asset(
+                              'assets/images/coffee.png',
+                            )
+                          : Image.asset(
+                              'assets/images/coffee_off1.png',
+                            ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_value == 4) {
+                          ambientAudio.pause();
+                          _value = 0;
+                        } else {
+                          _value = 4;
+                        }
+                      });
+                      if (_value != 0) {
+                        ambientAudio.setVolume(1.0);
+                        ambientAudio.open(Audio('assets/audios/rain.mp3'),
+                            loopMode: LoopMode.playlist);
+                      }
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 20,
+                        left: 8,
+                        right: 8,
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                          color: Colors.white12,
+                          border: _value == 4
+                              ? Border.all(color: Colors.white)
+                              : null,
+                          borderRadius: BorderRadius.circular(8)),
+                      height: 56,
+                      width: 56,
+                      child: _value == 4
+                          ? Image.asset(
+                              'assets/images/rain.png',
+                            )
+                          : Image.asset(
+                              'assets/images/rain_off1.png',
+                            ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
