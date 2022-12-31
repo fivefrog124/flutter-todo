@@ -7,7 +7,9 @@ import 'package:lottie/lottie.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:achievement_view/achievement_view.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:collection/collection.dart';
 
 // ignore: must_be_immutable
 class CountdownTimer extends StatefulWidget {
@@ -45,14 +47,59 @@ class _CountdownTimerState extends State<CountdownTimer>
   double _width = 36.0;
 
   int achievementStep15 = 0;
+  int achievementStep25 = 0;
+  int achievementStep40 = 0;
+
+  creatDb() async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'achievement_db.db');
+
+    Database database = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+      // When creating the db, create the table
+      await db.execute(
+          'CREATE TABLE Achievement (id INTEGER PRIMARY KEY, achievementStep15 INTEGER, achievementStep25 INTEGER, achievementStep40 INTEGER)');
+    });
+    await database.transaction((txn) async {
+      if (achievementStep15 == 0 &&
+          achievementStep25 == 0 &&
+          achievementStep40 == 0) {
+        int id1 = await txn.rawInsert(
+            'INSERT INTO Achievement (achievementStep15, achievementStep25, achievementStep40) VALUES($achievementStep15, $achievementStep25, $achievementStep40)');
+        // ignore: avoid_print
+        print('inserted1: $id1');
+      } else {
+        // Update some record
+        int count = await database.rawUpdate(
+            'UPDATE Achievement SET achievementStep15 = $achievementStep15, achievementStep25 = $achievementStep25, achievementStep40 = $achievementStep40 WHERE id = 1');
+        // ignore: avoid_print
+        print('updated: $count');
+      }
+    });
+    // Get the records
+    List<Map> list =
+        await database.rawQuery('SELECT * FROM Achievement WHERE id = 1');
+    List<Map> expectedList = [
+      {
+        'id': 1,
+        'achievementStep15': achievementStep15,
+        'achievementStep25': achievementStep25,
+        'achievementStep40': achievementStep40
+      }
+    ];
+    // ignore: avoid_print
+    print(list);
+    // ignore: avoid_print
+    print(expectedList);
+    assert(const DeepCollectionEquality().equals(list, expectedList));
+  }
+
+  dataInsert() {}
 
   @override
-  initState() async {
+  initState() {
     super.initState();
-    var achievement_db = await openDatabase('achievement_db.db');
-
-    await achievement_db.execute(
-        'CREATE TABLE achievement (id INTEGER PRIMARY KEY, achievement15 INTEGER, achievement25 INTEGER, achievement40 INTEGER, achievementINFINITI INTEGER)');
+    creatDb();
 
     // ignore: await_only_futures
     myDuration = Duration(seconds: widget.countMin);
@@ -73,7 +120,6 @@ class _CountdownTimerState extends State<CountdownTimer>
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
-    achievementFunc();
     backgroundAudio.open(
         Audio.network('http://pavo.prostreaming.net:8052/stream'),
         loopMode: LoopMode.playlist);
@@ -96,19 +142,74 @@ class _CountdownTimerState extends State<CountdownTimer>
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     super.dispose();
   }
 
   achievementFunc() async {
-    if (achievementStep15 == 1) {
-      showAchievement15(context);
-    }
+    setState(() {
+      if (widget.countMin == 6) {
+        setState(() {
+          achievementStep15++;
+          creatDb();
+
+          print('bizim countMin:${achievementStep15}');
+          if (achievementStep15 == 3) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep15);
+          } else if (achievementStep15 == 5) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep15);
+          }
+        });
+      } else if (widget.countMin == 25) {
+        setState(() {
+          achievementStep25++;
+          if (achievementStep25 == 3) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep25);
+          } else if (achievementStep25 == 5) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep25);
+          }
+        });
+      } else if (widget.countMin == 40) {
+        setState(() {
+          achievementStep40++;
+          if (achievementStep40 == 3) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep40);
+          } else if (achievementStep40 == 5) {
+            showAchievement(context as BuildContext);
+
+            creatDb();
+            // ignore: avoid_print
+            print(achievementStep40);
+          }
+        });
+      }
+    });
   }
 
-  void showAchievement15(BuildContext context) {
+  void showAchievement(BuildContext context) {
     AchievementView(context,
         title: "Yeaaah!",
-        subTitle: "Successfully completed 15 minutes of study!",
+        subTitle: "Successfully completed $countMin minutes of study!",
         icon: const Icon(
           Icons.stars_rounded,
           color: Colors.white,
@@ -161,12 +262,7 @@ class _CountdownTimerState extends State<CountdownTimer>
       final seconds = myDuration.inSeconds - reduceSecondsBy;
       if (seconds < 0) {
         countdownTimer!.cancel();
-        if (widget.countMin == 5) {
-          achievementStep15++;
-          // ignore: avoid_print
-          print(achievementStep15);
-          achievementFunc();
-        }
+        achievementFunc();
       } else {
         myDuration = Duration(seconds: seconds);
       }

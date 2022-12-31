@@ -106,7 +106,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CountdownTimer(
-                            countMin: 5,
+                            countMin: 6,
                             themeValue: widget.themeValue,
                           ),
                         ),

@@ -201,6 +201,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  floor:
+    dependency: "direct main"
+    description:
+      name: floor
+      sha256: "47b30dc15d2415533b6d09b9eaff8250472584db218869530c2b760e607ca7b5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
+  floor_annotation:
+    dependency: transitive
+    description:
+      name: floor_annotation
+      sha256: "7fea065005731da50ab2161a780228615acf6c9931dc32c2cd84298e466fbf3a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -502,7 +518,7 @@ packages:
     source: hosted
     version: "0.27.7"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "76917b7d4b9526b2ba416808a7eb9fb2863c1a09cf63ec85f1453da240fa818a"
@@ -594,6 +610,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0+2"
+  sqflite_common_ffi:
+    dependency: transitive
+    description:
+      name: sqflite_common_ffi
+      sha256: "9c922744759dc8364ae724af2620acf25aba2e7756aae7844b98649e6fd29f11"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0+1"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: db6350456720a4088a364bbe02052d43056a5ffbd4816fe9d28310dcfbe0dc05
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.1"
   stack_trace:
     dependency: transitive
     description:
